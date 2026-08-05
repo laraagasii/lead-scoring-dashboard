@@ -24,21 +24,21 @@ def train_final_model():
 
     # 3. Handling Missing Values
     for col in X.columns:
-        if X[col].dtype == 'object':
-            X[col] = X[col].fillna('Not Specified')
-        else:
+        if pd.api.types.is_numeric_dtype(X[col]):
             X[col] = X[col].fillna(X[col].median())
+        else:
+            X[col] = X[col].fillna('Not Specified')
 
     # 4. Ambil opsi kategori untuk dropdown di Streamlit
     cat_options = {}
-    for col in X.select_dtypes(include=['object']).columns:
+    for col in X.select_dtypes(exclude=['number']).columns:
         cat_options[col] = sorted([str(x) for x in X[col].unique()])
 
     # 5. Build Pipeline Preprocessing & Model
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', StandardScaler(), X.select_dtypes(exclude=['object']).columns.tolist()),
-            ('cat', OneHotEncoder(handle_unknown='ignore'), X.select_dtypes(include=['object']).columns.tolist())
+            ('num', StandardScaler(), X.select_dtypes(include=['number']).columns.tolist()),
+            ('cat', OneHotEncoder(handle_unknown='ignore'), X.select_dtypes(exclude=['number']).columns.tolist())
         ])
 
     model = Pipeline(steps=[
