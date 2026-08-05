@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import time
+import xgboost as xgb
 
 # Konfigurasi Halaman
 st.set_page_config(page_title="Lead Scorer Pro", page_icon="🎯", layout="wide")
